@@ -24,15 +24,9 @@ public class ProjectController {
         String base64Image = imageData.getImage().split(",")[1];
         byte[] imageBytes = java.util.Base64.getDecoder().decode(base64Image);
 
-        HttpClient httpClient = HttpClient.newHttpClient();
-
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://1e2a-193-30-245-6.ngrok-free.app/upload"))
-                .POST(HttpRequest.BodyPublishers.ofString("{\"image\" : \"" + base64Image + "\"}"))
-                .header("Content-Type", "application/json").build();
-
-        try {
-            httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        File file = new File("/images/image" + new Random().nextInt(1000) + ".png");
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
+            fileOutputStream.write(imageBytes);
         } catch (Exception e) {
             e.printStackTrace();
         }
