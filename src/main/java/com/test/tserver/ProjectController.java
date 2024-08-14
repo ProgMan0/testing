@@ -31,8 +31,11 @@ public class ProjectController {
                 .POST(HttpRequest.BodyPublishers.ofString("{\"image\" : \"" + imageData.getImage() + "\"}"))
                 .header("Content-Type", "application/json").build();
 
+        log.info(base64Image);
+
         try {
-            httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            var ll = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            log.info(ll.body());
         } catch (Exception e) {
             e.printStackTrace();
         }
