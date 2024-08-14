@@ -28,7 +28,7 @@ public class ProjectController {
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create("https://1e2a-193-30-245-6.ngrok-free.app/upload"))
-                .POST(HttpRequest.BodyPublishers.ofString("{\"image\" : \"" + base64Image + "\"}"))
+                .POST(HttpRequest.BodyPublishers.ofString("{\"image\" : \"" + imageData.getImage() + "\"}"))
                 .header("Content-Type", "application/json").build();
 
         try {
